@@ -30,45 +30,49 @@ def fill_greedy(g: Grid):
 
     print(f"{g.col}")
 
-    for i in g.snakes:
-        if i <= g.col:
-            choosen.append(i)
+    print(snakes_sorted)
+    for k, i in enumerate(g.snakes):
+        if k < len(row_clean_indx):
+            if i < g.col:
+                choosen.append(i)
+        else:
+            break
 
-    #print(choosen)
+    print(choosen)
+    print(f"len coosen: {len(choosen)}")
 
     choosen_indexes = []
     for snake_len in choosen:
         l = list(tmp[snake_len])
-        choosen_indexes.append(l.pop())
+        act_indx = l.pop()
+        choosen_indexes.append(act_indx)
         tmp[snake_len] = set(l)
 
-    choosen_indexes.sort()
+    #choosen_indexes.sort()
     print(choosen_indexes)
+
+    res_res = ["" for i in range(0, len(g.snakes))]
 
     res_list = []
     indx_row_clean = 0
+    indx_choosen_index = 0
     for snake_len in choosen:
         #print(f"index: {tmp[snake_len].pop()}")
-        res = f"0 {indx_row_clean} "
+        res = f"0 {row_clean_indx[indx_row_clean]}"
 
-        for i in range(0,snake_len):
-            res += "R"
+        for i in range(0,snake_len-1):
+            res += " R"
 
-        print(res)
         indx_row_clean += 1
-        res_list.append(res)
+        res_res[choosen_indexes[indx_choosen_index]] = res
+        indx_choosen_index += 1
+        #res_list.append(res)
 
     f = open("solution.txt", "w")
 
-    for i in res_list:
+    for i in res_res:
         f.write(i + "\n")
 
-    missing =  len(g.snakes) - len(res_list)
 
-    for i in range(0, missing):
-        f.write("\n")
-
-
-
-g: Grid = parse_input("input/02.txt")
+g: Grid = parse_input("input/05.txt")
 fill_greedy(g)
