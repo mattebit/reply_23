@@ -9,7 +9,7 @@ from data import Grid, Snake
 # Second row
 # length length ..
 
-def parse_input(filename: str):
+def parse_input(filename: str) -> Grid:
     f = open(filename)
     lines : list[str] = f.readlines()
     
@@ -38,7 +38,6 @@ def parse_input(filename: str):
     g.snakes = snakes_len
 
     # others
-    pattern_others = "(\d*)\s+(\*)+"
     for line in lines[2:]:
         line = line[0:-1]
         splitted = line.split(" ")
@@ -51,6 +50,8 @@ def parse_input(filename: str):
 
         g.grid.append(row)    
 
-parse_input("input/05-input-opposite-points-holes.txt")
+    return g
+
+#parse_input("input/05-input-opposite-points-holes.txt")
 
 print("done")
