@@ -12,67 +12,64 @@ def find_row_no_wormhole(g: Grid):
             res.append(i)
     return res
 
+
 def fill_greedy(g: Grid):
     row_clean_indx = find_row_no_wormhole(g)
+    #row_clean_indx = [str(i) for i in range(0, g.row)]
     print(f"clean rows: {len(row_clean_indx)}")
-
-    tmp: dict[int, set[int]] = {} #size : all indexes
-    for k, s in enumerate(g.snakes):
-        try:
-            tmp[s].add(k)
-        except KeyError:
-            tmp[s] = set()
-            tmp[s].add(k)
-    snakes_sorted = g.snakes
-    snakes_sorted.sort(reverse=True)
-
-    choosen = []
-
     print(f"{g.col}")
 
-    print(snakes_sorted)
+    snakes_arr : list[Snake] = []
+
     for k, i in enumerate(g.snakes):
+        snakes_arr.append(Snake(
+					i, k
+				))
+    #print([i.len for i in snakes_arr])
+    snakes_arr.sort(reverse=True,key=lambda sn: sn.len)
+    #print([i.len for i in snakes_arr])
+
+    row_remaining = []
+    c =0
+    for k, s in enumerate(snakes_arr):
         if k < len(row_clean_indx):
-            if i < g.col:
-                choosen.append(i)
+            #print(f"{g.col-s.len}")
+            if s.len < g.col:
+                scarto = g.col-s.index
+
+                pos_max = 0
+                sum_max = 0
+                for pos in range(0, g.col-s.len):
+                    act_sum = sum(g.grid[k][pos:])
+                    if act_sum > sum_max:
+                        pos_max = pos
+                        sum_max = act_sum
+
+                s.start = (pos_max, row_clean_indx[k])
+                c += 1
+
+                for i in range(0, s.len - 1):
+                    s.moves.append("R")
         else:
             break
+    print(c)
 
-    print(choosen)
-    print(f"len coosen: {len(choosen)}")
+    #print(scarto)
 
-    choosen_indexes = []
-    for snake_len in choosen:
-        l = list(tmp[snake_len])
-        act_indx = l.pop()
-        choosen_indexes.append(act_indx)
-        tmp[snake_len] = set(l)
+    snakes_arr.sort(reverse=False, key=lambda sn: sn.index)
 
-    #choosen_indexes.sort()
-    print(choosen_indexes)
-
-    res_res = ["" for i in range(0, len(g.snakes))]
-
-    res_list = []
-    indx_row_clean = 0
-    indx_choosen_index = 0
-    for snake_len in choosen:
-        #print(f"index: {tmp[snake_len].pop()}")
-        res = f"0 {row_clean_indx[indx_row_clean]}"
-
-        for i in range(0,snake_len-1):
-            res += " R"
-
-        indx_row_clean += 1
-        res_res[choosen_indexes[indx_choosen_index]] = res
-        indx_choosen_index += 1
-        #res_list.append(res)
 
     f = open("solution.txt", "w")
 
-    for i in res_res:
-        f.write(i + "\n")
+    c = 0
+    for i in snakes_arr:
+        #print(i.len)
+        #print(i.index)
+        if i.start != ():
+            c +=1
+        f.write(i.__str__())
 
+    print(c)
 
-g: Grid = parse_input("input/05.txt")
+g: Grid = parse_input("input/03.txt")
 fill_greedy(g)

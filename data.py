@@ -29,35 +29,25 @@ class Grid():
 
 class Snake():
     len: int = 0
-    body: list[tuple[int, int]] = []
     value: int = 0
     start: tuple[int, int] = ()
     moves: list[str] = []
+    index: int
 
 
-    def __init__(self):
-        self.len = 0
-        self.body = [()] # tuple(x,y) - list of segment's coordinates
+    def __init__(self, len, index):
+        self.len = len
         self.value = 0 # total value of the snake
         self.start = () # tuple (x,y) - start position
         self.moves = []
-        
-    
-    def set_len(self, len):
-        self.len = len
-    
+        self.index = index
 
-    def set_start(self, start):
-        self.start = start
-    
 
-    def set_moves(self, moves):
-        self.moves = moves
-
-    def set_body(self, moves):
+    def get_body(self, moves):
         # set body of snake based on moves
         # self.body = [self.start] -> not needed 'cause it's already in the moves list
 
+        body = [()] # list[tuple[int, int]] = [] - list of segment's coordinates
         i = 0
         n_instructions = self.len
         while n_instructions > 0:
@@ -76,16 +66,26 @@ class Snake():
                     x += 1
                 i += 1
             n_instructions -= 1
-            self.body.append((x,y))
+            body.append((x,y))
+        return body
 
 
-    def calculate_value(self, g : Grid):
+    def calculate_value(self, g : Grid, body : list[tuple[int, int]]):
         # calculate value of snake
         for i in range(self.len):
-            self.value += g.grid[self.body[i][0]][self.body[i][1]]
+            self.value += g.grid[body[i][0]][body[i][1]]
     
 
     def __str__(self):
-        return str(self.moves) + "\n"
+        s = ""
+        if self.start != ():
+            s += f"{self.start[0]} {self.start[1]}"
+            for i in self.moves:
+                if i == 0:
+                    s += f"{i}"
+                else:
+                    s += f" {i}"
 
-    
+        s += "\n"
+        return s
+
